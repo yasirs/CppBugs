@@ -139,7 +139,9 @@ namespace cppbugs {
       //set_scale_all(jumping_stochastics,ideal_scale);
 
       // tuning phase
-      tune(adapt,static_cast<int>(adapt/100));
+      if (adapt>0) {
+        tune(adapt,std::min(1,static_cast<int>(adapt/100)));
+      }
 
       logp_value  = -std::numeric_limits<double>::infinity();
       old_logp_value = -std::numeric_limits<double>::infinity();
