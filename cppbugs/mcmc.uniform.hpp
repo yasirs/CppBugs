@@ -61,5 +61,25 @@ namespace cppbugs {
       }
     }
   };
+
+  template<>
+  class Uniform <arma::vec> : public Stochastic<arma::vec> {
+  public:
+    Uniform(const arma::vec& value, const bool observed=false): Stochastic<arma::vec>(value,observed) {}
+
+    template<typename U, typename V>
+    void dunif(const U& lower, const V& upper) {
+      arma::uvec less_than_lower_bound = find(value < lower,1);
+      arma::uvec greater_than_upper_bound = find(value > upper,1);
+
+      if(less_than_lower_bound.n_elem || greater_than_upper_bound.n_elem) {
+	Stochastic<arma::vec>::logp_ = -std::numeric_limits<double>::infinity();
+      } else {
+	Stochastic<arma::vec>::logp_ = accu(-log(upper - lower));
+      }
+    }
+  };
+
+
 } // namespace cppbugs
 #endif // MCMC_UNIFORM_HPP
